@@ -83,12 +83,77 @@
 	$lessons[] = new Seminar(4, new TimedCostStrategy);
 	$lessons[] = new Lecture(4, new TimedCostStrategy);
 
-	foreach ($lessons as $lesson) {
+	// foreach ($lessons as $lesson) {
 
-		print "lesson charge {$lesson->cost()}.";
-		print "charge type {$lesson->chargeType()}\n";
+	// 	print "lesson charge {$lesson->cost()}.";
+	// 	print "charge type {$lesson->chargeType()}\n";
+
+	// }
+
+
+
+
+	class RegistrationMgr
+	{
+		public function register(Lesson $lesson)
+		{
+			// do something with the lesson
+			
+
+			// now tell someone
+			
+			$notifire = Notifire::getNotifire();
+			$notifire->inform("new lesson:cost ({$lesson->cost()})");
+		}
 
 	}
+
+
+	abstract class Notifire
+	{
+		public static function getNotifire(): Notifire
+		{
+			// acquire concrete class according
+			// to configuration or other logic
+			
+
+			if(rand(1, 2) === 1)
+			{
+				return new MailNotifire();
+			}else
+			{
+				return new TextNotifire();
+			}
+		}
+
+		abstract public function inform($message);
+	}
+
+	class MailNotifire extends Notifire
+	{
+		public function inform($message)
+		{
+			print "Mail Notification: {$message}\n";
+		}
+	}
+
+	class TextNotifire extends Notifire
+	{
+		public function inform($message)
+		{
+			print "Text Notification: {$message}\n";
+		}
+	}
+
+
+	$lesson1 = new Seminar(4, new FixedCostStrategy());
+	$lesson2 = new Lecture(4, new TimedCostStrategy());
+
+	$mgr = new RegistrationMgr();
+
+	$mgr->register($lesson1);
+	$mgr->register($lesson2);
+
 
 	// $costs[] = new TimedCostStrategy();
 	// $costs[] = new FixedCostStrategy();
